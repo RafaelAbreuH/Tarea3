@@ -1,4 +1,4 @@
-﻿@page "/counter/{ClienteId:int}"
+﻿@page "/RClientes/{ClienteId:int}"
 @using Tarea3.DAL
 @using Tarea3.Data
 @using Tarea3.BLL
@@ -84,6 +84,7 @@
             {
                 if (ClienteId == 0)
                 {
+
 
                     if (db.Guardar(Cliente))
                     {
