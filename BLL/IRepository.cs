@@ -6,13 +6,14 @@ using System.Threading.Tasks;
 
 namespace Tarea3.BLL
 {
-    interface IRepository<T> where T : class
+    public interface IRepository<T> where T : class
     {
-        public bool Guardar(T entity);
-        public bool Modificar(T entity);
-        public bool Eliminar(int Id);
-        public T Buscar(int Id);
-        public List<T> GetList(Expression<Func<T, bool>> expression);
+        bool Insert(T entity);
+        bool Update(T entity);
+        bool Delete(T entity);
+        T Get(int id);
+        Task<IList<T>> ListAsync();
+        IList<T> List(Expression<Func<T, bool>> expression);
 
     }
 }

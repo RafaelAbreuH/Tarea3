@@ -50,35 +50,8 @@
 
     @code {
 
-        Clientes Cliente = new Clientes();
-
-        [Parameter]
-        public int ClienteId { get; set; }
-
-        protected override void OnInitialized()
-    {
-
-        Cliente = new Clientes();
-
-        if (ClienteId > 0)
-        {
-            Buscar();
-        }
-
-    }
-
-    private void Buscar()
-    {
-        try
-        {
-            RepositorioBase<Clientes> db = new RepositorioBase<Clientes>();
-
-            Cliente = db.Buscar(ClienteId);
-
-
-        }
-        catch (Exception) {  }
-    }
+       Clientes Cliente = new Clientes();
+    
 
         private void Limpiar()
         {
@@ -89,41 +62,42 @@
             Cliente.Ciudad = string.Empty;
             Cliente.Email = string.Empty;
         }
+
+         private void Nuevo()
+        {
+            Limpiar();
+        }
+
+
         private void Guardar()
         {
             RepositorioBase<Clientes> db = new RepositorioBase<Clientes>();
+
+
+
             try
             {
-
-
-                if (ClienteId == 0)
+                if(Cliente.ClientesId == 0)
                 {
-                    if (db.Guardar(Cliente))
+                    if (db.Insert(Cliente))
                     {
-                        Cliente = new Clientes();
                         Limpiar();
 
                     }
-                    else
-                    {
-                        // mensage de error aqui
-                    }
+
                 }
                 else
                 {
-                    Cliente.ClientesId = ClienteId;
-                    if (db.Modificar(Cliente))
+                    if(db.Update(Cliente))
                     {
-                        Cliente = new Clientes();
-                            Limpiar();
-                    }
-                    else
-                    {
-                        // Mensage de error
+                        Limpiar();
                     }
                 }
             }
-            catch (Exception) { }
-
+            catch (Exception)
+            {
+                throw;
+            }
         }
+
     }

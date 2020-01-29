@@ -10,114 +10,46 @@ namespace Tarea3.BLL
 {
     public class RepositorioBase<T> : IDisposable, IRepository<T> where T : class
     {
-        internal Contexto db;
+        private readonly Contexto _dataContext;
 
         public RepositorioBase()
         {
-            db = new Contexto();
+            _dataContext = new Contexto();
         }
-
-        public bool Guardar(T entity)
+        public bool Insert(T entity)
         {
-            bool paso = false;
-
-
-            try
-            {
-                if (db.Set<T>().Add(entity) != null)
-                    paso = db.SaveChanges() > 0;
-
-            }
-            catch (Exception)
-            {
-                throw;
-            }
-
-
-            return paso;
+            _dataContext.Set<T>().Add(entity);
+            return _dataContext.SaveChanges() > 0;
         }
-
-        public bool Modificar(T entity)
+        public bool Update(T entity)
         {
-            bool paso = false;
-
-
-            try
-            {
-                db.Entry(entity).State = EntityState.Modified;
-                paso = db.SaveChanges() > 0;
-
-            }
-            catch (Exception)
-            {
-                throw;
-            }
-
-
-            return paso;
+            _dataContext.Entry<T>(entity).State = EntityState.Modified;
+            return _dataContext.SaveChanges() > 0;
         }
-        public T Buscar(int id)
+        public bool Delete(T entity)
         {
-            T entity;
-
-
-            try
-            {
-                entity = db.Set<T>().Find(id);
-
-            }
-            catch (Exception)
-            {
-                throw;
-            }
-
-
-            return entity;
+            _dataContext.Set<T>().Remove(entity);
+            return _dataContext.SaveChanges() > 0;
         }
-        public List<T> GetList(Expression<Func<T, bool>> expression)
+
+        public T Get(int id)
         {
-            List<T> lista = new List<T>();
-
-
-            try
-            {
-                lista = db.Set<T>().Where(expression).ToList();
-
-            }
-            catch (Exception)
-            {
-                throw;
-            }
-
-
-            return lista;
-
+            return _dataContext.Set<T>().Find(id);
         }
-        public bool Eliminar(int id)
+
+        public async Task<IList<T>> ListAsync()
         {
-            bool paso = false;
-
-
-            try
-            {
-                T entity = this.Buscar(id);
-                if (entity is null)
-                    return false;
-
-                db.Entry(entity).State = EntityState.Deleted;
-                paso = db.SaveChanges() > 0;
-
-            }
-            catch (Exception)
-            {
-                throw;
-            }
-
-            return paso;
+            return await _dataContext.Set<T>().ToListAsync();
         }
+
+        public IList<T> List(Expression<Func<T, bool>> expression)
+        {
+            return _dataContext.Set<T>().Where(expression).ToList();
+        }
+
         public void Dispose()
         {
-            db.Dispose();
+            _dataContext.Dispose();
         }
 
     }
